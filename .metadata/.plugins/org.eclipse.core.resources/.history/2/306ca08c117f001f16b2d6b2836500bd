@@ -1,0 +1,95 @@
+package jeu;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import cartes.Carte;
+
+public class Sabot implements Iterable<Carte> {
+	
+	private int nbCartes;	
+	private Carte pioche[];
+	private int nbOperation = 0;
+	private Iterator<Carte> iterateur = iterator();
+	
+	
+	public Sabot(Carte cartes[]) {
+		pioche=cartes;
+		nbCartes=cartes.length;
+	}
+	
+	public boolean estVide() {
+		return nbCartes==0;
+	}
+	
+	public void ajouterCarte(Carte carte) {
+		if(nbCartes == 106) 
+			throw new IllegalStateException();
+		
+		else {
+			pioche[nbCartes]=carte;
+			nbCartes++;
+			nbOperation++;
+		}
+	}
+	
+	
+	public Carte piocher() {
+		Carte carte = iterateur.next();
+		iterateur.remove();
+		return carte;
+	}
+	
+	
+	
+	
+	private class Iterateur implements Iterator<Carte>{
+		private int nbOperationRef = nbOperation;
+		private int indiceIterateur = 0;
+		private boolean nextEffectue = false;
+		
+		private void VerificationConcurrence() {
+			if(nbOperation != nbOperationRef) 
+				throw new ConcurrentModificationException();
+			
+		}
+		
+		public boolean hasNext() {
+			return indiceIterateur<nbCartes;
+		}
+		
+		public Carte next() {
+			VerificationConcurrence();
+			if(hasNext()) {
+				Carte cartes = pioche[indiceIterateur];
+				indiceIterateur++;
+				nextEffectue = true;
+				return cartes;
+			}
+			else 
+				throw new NoSuchElementException();
+			
+		}
+		
+		public void remove() {
+			VerificationConcurrence();
+			if(nbCartes < 1 || !nextEffectue) 
+				throw new IllegalStateException();
+			for(int i = indiceIterateur -1; i<nbCartes; i++) {
+				pioche[i]=pioche[i+1];
+			}
+			nextEffectue = false;
+			indiceIterateur--;
+			nbCartes--;
+			nbOperation++;
+			nbOperationRef++;
+			
+		}
+		
+		
+	}
+	
+	
+	
+	
+}

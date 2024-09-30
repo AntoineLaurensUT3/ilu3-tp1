@@ -1,0 +1,26 @@
+package jeu;
+import cartes.Carte;
+
+public class Sabot {
+	
+	private int nbCartes;
+	private Carte pioche[];
+	public Sabot(Carte cartes[]) {
+		pioche=cartes;
+		nbCartes=cartes.length;
+	}
+	
+	public boolean estVide() {
+		return nbCartes==0;
+	}
+	
+	public void ajouterCarte(Carte carte) {
+		if(nbCartes == 106) {
+			throw new IllegalStateException();
+		}
+		else {
+			pioche[nbCartes]=carte;
+		}
+	}
+
+}
